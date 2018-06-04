@@ -51,6 +51,8 @@ def _convert_data_with_column_names(data, schema):
             column_data[column] = _col
     for column in schema:
         _col = column_data.get(column)
+        if type(_col) in [dict, list] :
+            _col = json.dumps(_col)
         array_data.append(pa.array(_col))
     return pa.RecordBatch.from_arrays(array_data, schema)
 
@@ -65,6 +67,8 @@ def _convert_data_with_schema(data, schema, date_format=None):
             column_data[column] = _col
     for column in schema:
         _col = column_data.get(column.name)
+        if type(_col) in [dict, list] :
+            _col = json.dumps(_col)
         if isinstance(column.type, pa.lib.TimestampType):
             _converted_col = []
             for t in _col:
@@ -92,7 +96,10 @@ def _convert_data_with_schema(data, schema, date_format=None):
             _col = map(_boolean_converter, _col)
             array_data.append(pa.array(_col, type=column.type))
         else:
-            array_data.append(pa.array(_col, type=column.type))
+            try:
+                array_data.append(pa.array(_col, type=column.type))
+            except :
+                print("error column: " + column.name)
     return pa.RecordBatch.from_arrays(array_data, schema.names)
 
 
