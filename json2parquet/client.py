@@ -67,8 +67,8 @@ def _convert_data_with_schema(data, schema, date_format=None):
             column_data[column] = _col
     for column in schema:
         _col = column_data.get(column.name)
-        if type(_col) in [dict, list] :
-            _col = json.dumps(_col)
+        #if type(_col) in [dict, list] :
+        #    _col = json.dumps(_col)
         if isinstance(column.type, pa.lib.TimestampType):
             _converted_col = []
             for t in _col:
@@ -90,7 +90,7 @@ def _convert_data_with_schema(data, schema, date_format=None):
             array_data.append(pa.Array.from_pandas(_col, type=pa.float32()))
         elif column.type.id == pa.int32().id:
             # PyArrow 0.8.0 can cast int64 -> int32
-            print(_col)
+            #print(_col)
             _col64 = pa.array(_col, type=pa.int64())
             array_data.append(_col64.cast(pa.int32()))
         elif column.type.id == pa.bool_().id:
