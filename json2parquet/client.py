@@ -102,6 +102,10 @@ def _convert_data_with_schema(data, schema, date_format=None):
             except Exception as es:
                 print("error column: " + column.name)
                 print(es)
+                if column.type.id == pa.string().id:
+                    #_col = map(str, _col)
+                    _col = [json.dumps(x) for x in _col]
+                    array_data.append(pa.Array.from_pandas(_col, type=pa.string()))
     return pa.RecordBatch.from_arrays(array_data, schema.names)
 
 
