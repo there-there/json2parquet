@@ -51,8 +51,8 @@ def _convert_data_with_column_names(data, schema):
             column_data[column] = _col
     for column in schema:
         _col = column_data.get(column)
-        if type(_col) in [dict, list] :
-            _col = json.dumps(_col)
+        # if type(_col) in [dict, list] :
+        #    _col = json.dumps(_col)
         array_data.append(pa.array(_col))
     return pa.RecordBatch.from_arrays(array_data, schema)
 
