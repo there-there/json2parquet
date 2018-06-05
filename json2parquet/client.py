@@ -126,6 +126,23 @@ def load_json(filename, schema=None, date_format=None):
     return ingest_data(json_data, schema=schema, date_format=date_format)
 
 
+def load_s3_json(filename, schema, date_format=None):
+    """
+    Simple but inefficient way to load data from a newline delineated json file
+    """
+    import smart_open
+    json_data = []
+    with smart_open.smart_open(filename) as fin:
+        for line in fin:
+            if line:
+                js = json.loads(line.decode())
+                #js['event_properties'] = str(js['event_properties'])
+                #js['user_properties'] = str(js['user_properties'])
+                json_data.append(js)
+                #json_data.append(json.loads(line.decode()))
+                #json_data.append(json.loads(line.decode().replace('$insert_id', 'insert_id').replace('$schema', 'schema')))
+    return ingest_data(json_data, schema, date_format=date_format)
+
 def write_parquet(data, destination, **kwargs):
     """
     data: PyArrow record batch
@@ -157,5 +174,8 @@ def write_parquet_dataset(data, destination, **kwargs):
 
 
 def convert_json(input, output, schema=None, date_format=None, **kwargs):
-    data = load_json(input, schema=schema, date_format=date_format)
+    if input.startswith('s3://'):
+        data = load_s3_json(input, schema=schema, date_format=date_format)
+    else:
+        data = load_json(input, schema=schema, date_format=date_format)
     write_parquet(data, output, **kwargs)
