@@ -67,6 +67,8 @@ def _convert_data_with_schema(data, schema, date_format=None):
             column_data[column] = _col
     for column in schema:
         _col = column_data.get(column.name)
+        if _col is None:
+            continue;
         if type(_col) in [dict, list] :
             _col = json.dumps(_col)
         if isinstance(column.type, pa.lib.TimestampType):
