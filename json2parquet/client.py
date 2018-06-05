@@ -101,6 +101,7 @@ def _convert_data_with_schema(data, schema, date_format=None):
                 array_data.append(pa.array(_col, type=column.type))
             except :
                 print("error column: " + column.name)
+                print(_col)
     return pa.RecordBatch.from_arrays(array_data, schema.names)
 
 
